@@ -1,0 +1,121 @@
+[1604513277.646][INFO]: Starting ChromeDriver 86.0.4240.22 (398b0743353ff36fb1b82468f63a3a93b4e2e89e-refs/branch-heads/4240@{#378}) on port 9515
+[1604513277.646][INFO]: Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+[1604513278.141][INFO]: [cfa2872c9091a951373d6b65cee9a4ec] COMMAND InitSession {
+   "desiredCapabilities": {
+      "Platform": "Windows"
+   },
+   "requiredCapabilities": {
+
+   }
+}
+[1604513278.146][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1604513278.147][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1604513278.148][INFO]: Cannot switch to US keyboard layout - some keys may be interpreted incorrectly
+[1604513278.148][INFO]: Launching chrome: "C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --password-store=basic --remote-debugging-port=0 --test-type=webdriver --use-mock-keychain --user-data-dir="C:\Users\holio\AppData\Local\Temp\scoped_dir14160_2054550669" data:,
+[1604513278.671][INFO]: resolved localhost to ["::1","127.0.0.1"]
+[1604513280.698][INFO]: [cfa2872c9091a951373d6b65cee9a4ec] RESPONSE InitSession {
+   "acceptInsecureCerts": false,
+   "acceptSslCerts": false,
+   "applicationCacheEnabled": false,
+   "browserConnectionEnabled": false,
+   "browserName": "chrome",
+   "chrome": {
+      "chromedriverVersion": "86.0.4240.22 (398b0743353ff36fb1b82468f63a3a93b4e2e89e-refs/branch-heads/4240@{#378})",
+      "userDataDir": "C:\\Users\\holio\\AppData\\Local\\Temp\\scoped_dir14160_2054550669"
+   },
+   "cssSelectorsEnabled": true,
+   "databaseEnabled": false,
+   "goog:chromeOptions": {
+      "debuggerAddress": "localhost:64401"
+   },
+   "handlesAlerts": true,
+   "hasTouchScreen": false,
+   "javascriptEnabled": true,
+   "locationContextEnabled": true,
+   "mobileEmulationEnabled": false,
+   "nativeEvents": true,
+   "networkConnectionEnabled": false,
+   "pageLoadStrategy": "normal",
+   "platform": "Windows",
+   "proxy": {
+
+   },
+   "~~~": "..."
+}
+[1604513280.699][INFO]: [cfa2872c9091a951373d6b65cee9a4ec] COMMAND Navigate {
+   "url": "https://www.megabox.co.kr/movie-detail?rpstMovieNo=20046500"
+}
+[1604513280.699][INFO]: Waiting for pending navigations...
+[1604513280.701][INFO]: Done waiting for pending navigations. Status: ok
+[1604513280.788][INFO]: Waiting for pending navigations...
+[1604513281.444][INFO]: Done waiting for pending navigations. Status: ok
+[1604513281.444][INFO]: [cfa2872c9091a951373d6b65cee9a4ec] RESPONSE Navigate
+[1604513281.444][INFO]: [cfa2872c9091a951373d6b65cee9a4ec] COMMAND GetSource {
+
+}
+[1604513281.445][INFO]: Waiting for pending navigations...
+[1604513281.445][INFO]: Done waiting for pending navigations. Status: ok
+[1604513281.455][INFO]: Waiting for pending navigations...
+[1604513281.456][INFO]: Done waiting for pending navigations. Status: ok
+[1604513281.456][INFO]: [cfa2872c9091a951373d6b65cee9a4ec] RESPONSE GetSource "\u003Chtml lang=\"ko\">\u003C!--\u003C![endif]-->\u003Chead>\n    \u003Cmeta charset=\"utf-8\">\n    \u003Cmeta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n\n    \u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0..."
