@@ -7,80 +7,84 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
-	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/cavaliercoder/grab"
 )
 
-type ParseHTML struct {
-	url      string // https://www.megabox.co.kr/movie-detail?rpstMovieNo=
-	respName string // 20046500
-	htmlPath string
-	htmlName string
-	htmlFile *os.File
-	imgPath  string
-	imgName  string
-	sqlPath  string
-	sqlName  string
-	sqlFile  *os.File
-
-	doc *goquery.Document
-
-	MovTest
-}
-
-//MovTest table structs
-type MovTest struct {
-	MovTitle []string
-	MovOpd   []string
-	MovType  []string
-	MovGnr   []string
-	MovAge   []string
-	MovPst   []string
-	MovDrt   []string
-	MovRnt   []string
-	MovPfm   []string
-	MovSmr   []string
-}
-
 type Megabox struct {
+	Url       string
 	ImgPath   string
 	ImgSvrUrl string      `json:"imgSvrUrl"`
 	MovieList []MovieList `json:"movieList"`
 }
 
 type MovieList struct {
-	MovieNo   string `json:"movieNo"`
-	MovieNm   string `json:"movieNm"`
-	ImgPathNm string `json:"imgPathNm"`
+	BoxoRank          int    `json:"boxoRank"`
+	BoxoKofTotAdncCnt int    `json:"boxoKofTotAdncCnt"` // 누적관객
+	MovieNo           string `json:"movieNo"`           // 영화 넘버
+	MovieNm           string `json:"movieNm"`           // 영화이름
+	ImgPathNm         string `json:"imgPathNm"`         // 포스터 이미지
+	AdmisClassNm      string `json:"admisClassNm"`      // 등급
+	MovieSynopCn      string `json:"movieSynopCn"`      // 설명
+	PlayTime          string `json:"playTime"`          // 러닝타임
+	RfilmDe           string `json:"rfilmDe"`           // 개봉일
+	OnairYn           string `json:"onairYn"`           // Status
+}
+
+type Spec struct {
+	Star  string
+	Shap  string
+	Excla string
+	Alpa  string
+	Enper string
 }
 
 func main() {
 	log.Println("main log...")
 
 	m := &Megabox{
+		Url:     "https://www.megabox.co.kr/on/oh/oha/Movie/selectMovieList.do",
 		ImgPath: "./img/poster/ing/",
 	}
-	m.ListData()
+	m.GetList()
+
+	file, err := os.OpenFile(
+		"./sql/ing.sql",
+		os.O_CREATE|os.O_RDWR|os.O_TRUNC,
+		os.FileMode(0644),
+	)
+	if err != nil {
+		log.Fatal("file Create Error: ", err)
+	}
 
 	var wait sync.WaitGroup
 	wait.Add(len(m.MovieList))
-
-	for i, items := range m.MovieList {
-		log.Println(items)
-		go func(i int, items MovieList) {
+	for _, items := range m.MovieList {
+		go func(items MovieList) {
 			defer wait.Done()
-			m.PosterDown(i, items)
-		}(i, items)
+			if items.AdmisClassNm == "전체관람가" {
+				items.AdmisClassNm = "all"
+			} else {
+				items.AdmisClassNm = strings.TrimRight(items.AdmisClassNm, "세이상관람가")
+			}
+
+			items.ImgPathNm = "/img/poster/ing" + items.MovieNm + ".jpg"
+			rank := strconv.Itoa(items.BoxoRank)
+			cnt := strconv.Itoa(items.BoxoKofTotAdncCnt)
+			_, err = file.WriteString("--예매율랭킹" + rank + "\nINSERT INTO MOV_TEST(MOV_TITLE, MOV_CNT, MOV_OPD, MOV_CLD, MOV_AGE, MOV_PST, MOV_RNT, MOV_SMR)\n" +
+				"VALUES('" + items.MovieNm + "', " + cnt + ", '" + items.RfilmDe + "', '" + items.OnairYn + "', '" + items.AdmisClassNm + "', '" +
+				items.ImgPathNm + "', '" + items.PlayTime + "', '" + items.MovieSynopCn + "')\n",
+			)
+		}(items)
+
 	}
 	wait.Wait()
 }
 
-func (m *Megabox) ListData() {
-	url := "https://www.megabox.co.kr/on/oh/oha/Movie/selectMovieList.do"
+func (m *Megabox) GetList() {
 	method := "POST"
 
 	payload := strings.NewReader(`{
@@ -93,7 +97,7 @@ func (m *Megabox) ListData() {
 	}`)
 
 	client := &http.Client{}
-	req, err := http.NewRequest(method, url, payload)
+	req, err := http.NewRequest(method, m.Url, payload)
 
 	if err != nil {
 		fmt.Println(err)
@@ -120,28 +124,50 @@ func (m *Megabox) ListData() {
 		log.Fatal(err)
 	}
 
+	func(m *Megabox) {
+		var wait sync.WaitGroup
+		wait.Add(len(m.MovieList))
+
+		for _, items := range m.MovieList {
+			go func(items MovieList) {
+				defer wait.Done()
+				m.PosterDown(items)
+			}(items)
+		}
+
+		wait.Wait()
+	}(m)
 	return
 }
 
-func (m *Megabox) PosterDown(i int, list MovieList) {
+func (m *Megabox) PosterDown(list MovieList) {
 	client := grab.NewClient()
 	request, _ := grab.NewRequest(m.ImgPath, m.ImgSvrUrl+list.ImgPathNm)
 	response := client.Do(request)
 	filename := response.Filename
 
-	t := time.NewTicker(time.Second)
+	if strings.ContainsAny(list.MovieNm, ":") {
+		list.MovieNm = strings.ReplaceAll(list.MovieNm, ":", "")
+	} else if strings.ContainsAny(list.MovieNm, "/") {
+		list.MovieNm = strings.ReplaceAll(list.MovieNm, "/", "")
+	}
+
+	if list.OnairYn == "MSC02" {
+		list.OnairYn = "N"
+	}
 
 	for {
 		select {
-		case <-t.C:
-			fmt.Printf("%.02f%% complete\n", response.Progress())
 		case <-response.Done:
 			err := response.Err()
 			if err != nil {
 				// ...
 			}
-			os.Rename(filename, m.ImgPath+list.MovieNm+".jpg")
-			log.Println(i, "번째 Done!"+m.ImgPath+list.MovieNm+".jpg", response.HTTPResponse.StatusCode)
+			err = os.Rename(filename, m.ImgPath+list.MovieNm+".jpg")
+			if err != nil {
+				log.Println("Err:" + list.MovieNm)
+			}
+			log.Println("Done!"+m.ImgPath+list.MovieNm+".jpg", response.HTTPResponse.StatusCode)
 			return
 		}
 	}
