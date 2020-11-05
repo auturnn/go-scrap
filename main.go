@@ -76,7 +76,7 @@ func main() {
 			cnt := strconv.Itoa(items.BoxoKofTotAdncCnt)
 			_, err = file.WriteString("--예매율랭킹" + rank + "\nINSERT INTO MOV_TEST(MOV_TITLE, MOV_CNT, MOV_OPD, MOV_CLD, MOV_AGE, MOV_PST, MOV_RNT, MOV_SMR)\n" +
 				"VALUES('" + items.MovieNm + "', " + cnt + ", '" + items.RfilmDe + "', '" + items.OnairYn + "', '" + items.AdmisClassNm + "', '" +
-				items.ImgPathNm + "', '" + items.PlayTime + "', '" + items.MovieSynopCn + "')\n",
+				items.ImgPathNm + "', '" + items.PlayTime + "', '" + items.MovieSynopCn + "');\n",
 			)
 		}(items)
 
