@@ -92,7 +92,6 @@ func main() {
 }
 
 func (m *Megabox) CreateSQL(items *MovieList) {
-	log.Println(items.MovTitle, ":", items.MovGnr)
 	if items.MovAge == "전체관람가" {
 		items.MovAge = "all"
 	} else {
@@ -110,6 +109,7 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 		log.Println("SQL Error! ", err)
 	}
 
+	log.Println("SQL Done : ", items.MovTitle)
 	return
 }
 
