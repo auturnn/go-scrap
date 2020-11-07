@@ -1,4 +1,4 @@
 *.jpg
-debug.log
 *.sql
+
 go-scrap.exe
