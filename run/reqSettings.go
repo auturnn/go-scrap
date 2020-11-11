@@ -33,6 +33,7 @@ func Run() {
 			"SqlFileName": "./sql/movie-pre.sql",
 		},
 	}
+
 	var wait sync.WaitGroup
 	wait.Add(2)
 	for _, items := range list {

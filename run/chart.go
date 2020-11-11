@@ -60,9 +60,13 @@ func (m *Megabox) GetList() {
 				items.MovTitle = strings.ReplaceAll(items.MovTitle, "/", "")
 			}
 
-			if items.MovRnt == "MSC02" {
-				items.MovRnt = "N"
+			if items.MovLen == "MSC02" {
+				items.MovLen = "N"
 			}
+
+			ext := items.MimgPath[len(items.MimgPath)-4:]
+			items.MimgName = m.ImgPath + items.MovTitle + ext
+
 			m.PosterDown(items)
 			m.DetailRequest(&items)
 			m.CreateSQL(&items)
