@@ -9,6 +9,8 @@ import (
 func (m *Megabox) CreateSQL(items *MovieList) {
 	if items.MovAge == "전체관람가" {
 		items.MovAge = "all"
+	} else if items.MovAge == "청소년관람불가" {
+		items.MovAge = "18"
 	} else {
 		items.MovAge = strings.TrimRight(items.MovAge, "세이상관람가")
 	}
@@ -21,17 +23,38 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 
 	rank := strconv.Itoa(items.MovRank)
 	cnt := strconv.Itoa(items.MovCnt)
-	_, err := m.SqlFile.WriteString("\n\nINSERT INTO MOV_MST(MOV_TITLE, MOV_RANK, MOV_CNT, MOV_OPD, MOV_STAT, MOV_AGE)\n" +
-		"VALUES('" + items.MovTitle + "', " + rank + ", " + cnt + ", '" + items.MovOpd + "', '" + items.MovStat + "', '" + items.MovAge + "');\n" +
-		"INSERT INTO MOV_DT " +
-		"VALUES((SELECT LAST_INSERT_ID()), '" +
-		items.MovDrt + "', '" + items.MovAct + "', '" + items.MovLen + "', '" + items.MovSmr + "');\n" +
-		"INSERT INTO MOV_GENRE " +
-		"VALUES((SELECT LAST_INSERT_ID()), '" + items.MgnrName + "');\n" +
-		"INSERT INTO MOV_TYPE " +
-		"VALUES((SELECT LAST_INSERT_ID()), '" + items.MtypeName + "');\n" +
-		"INSERT INTO MOV_IMG " +
-		"VALUES((SELECT LAST_INSERT_ID()), '" + items.MimgName[1:] + "');\n")
+	_, err := m.SqlFile.WriteString(
+		"\n\nINSERT INTO MOV_MST(MOV_TITLE, MOV_RANK, MOV_CNT, MOV_OPD, MOV_STAT, MOV_AGE)\n" +
+			"VALUES('" + items.MovTitle + "', " + rank + ", " + cnt + ", '" + items.MovOpd + "', '" + items.MovStat + "', '" + items.MovAge + "')\n" +
+			"ON DUPLICATE KEY UPDATE MOV_RANK = " + rank + ", MOV_CNT =" + cnt + ", MOV_STAT = '" + items.MovStat + "', MOV_SEQ = LAST_INSERT_ID(MOV_SEQ);\n" +
+
+			"INSERT IGNORE INTO MOV_DT " +
+			"VALUES((SELECT LAST_INSERT_ID()), '" +
+			items.MovDrt + "', '" + items.MovAct + "', '" + items.MovLen + "', '" + items.MovSmr + "');\n" +
+
+			func() string { // 장르는 따로 구분하여 넣기 때문에 슬라이싱하여 '장르의 수 만큼 구문을 생성'한다.
+				s := strings.Split(items.MgnrName, ",")
+				gnr := ""
+				for _, s := range s {
+					gnr += "INSERT IGNORE INTO MOV_GENRE " +
+						"VALUES((SELECT LAST_INSERT_ID()), '" + s + "');\n"
+				}
+				return gnr
+			}() +
+			func() string { // 장르는 따로 구분하여 넣기 때문에 슬라이싱하여 '장르의 수 만큼 구문을 생성'한다.
+				s := strings.Split(items.MtypeName, ",")
+				typ := ""
+				for _, s := range s {
+					typ += "INSERT IGNORE INTO MOV_TYPE " +
+						"VALUES((SELECT LAST_INSERT_ID()), '" + s + "');\n"
+				}
+				return typ
+			}() +
+
+			"INSERT IGNORE INTO MOV_IMG " +
+			"VALUES((SELECT LAST_INSERT_ID()), '" + items.MimgName[1:] + "');\n",
+	)
+
 	if err != nil {
 		log.Println("SQL Error! ", err)
 	}
