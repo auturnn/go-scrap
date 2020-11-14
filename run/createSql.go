@@ -28,31 +28,41 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 			"VALUES('" + items.MovTitle + "', " + rank + ", " + cnt + ", '" + items.MovOpd + "', '" + items.MovStat + "', '" + items.MovAge + "')\n" +
 			"ON DUPLICATE KEY UPDATE MOV_RANK = " + rank + ", MOV_CNT =" + cnt + ", MOV_STAT = '" + items.MovStat + "', MOV_SEQ = LAST_INSERT_ID(MOV_SEQ);\n" +
 
-			"INSERT IGNORE INTO MOV_DT " +
+			"INSERT INTO MOV_DT " +
 			"VALUES((SELECT LAST_INSERT_ID()), '" +
-			items.MovDrt + "', '" + items.MovAct + "', '" + items.MovLen + "', '" + items.MovSmr + "');\n" +
+			items.MovDrt + "', '" + items.MovAct + "', '" + items.MovLen + "', '" + items.MovSmr + "')\n" +
+			"ON DUPLICATE KEY UPDATE\nMOV_SEQ = LAST_INSERT_ID(MOV_SEQ), MDT_DRCT= '" +
+			items.MovDrt + "', MDT_ACT='" + items.MovAct + "', MDT_LEN='" + items.MovLen + "', " +
+			"MDT_SMR= '" + items.MovSmr + "';\n" +
 
 			func() string { // 장르는 따로 구분하여 넣기 때문에 슬라이싱하여 '장르의 수 만큼 구문을 생성'한다.
 				s := strings.Split(items.MgnrName, ",")
 				gnr := ""
 				for _, s := range s {
-					gnr += "INSERT IGNORE INTO MOV_GENRE " +
-						"VALUES((SELECT LAST_INSERT_ID()), '" + s + "');\n"
+					s = strings.TrimSpace(s)
+					gnr += "INSERT INTO MOV_GENRE(MOV_SEQ,MGNR_NAME) SELECT (SELECT LAST_INSERT_ID()),'" + s +
+						"'\nFROM DUAL WHERE NOT EXISTS(SELECT MOV_SEQ, MGNR_NAME FROM MOV_GENRE\n" +
+						"WHERE MOV_SEQ = (SELECT LAST_INSERT_ID()) AND MGNR_NAME='" + s + "');\n"
 				}
 				return gnr
 			}() +
-			func() string { // 장르는 따로 구분하여 넣기 때문에 슬라이싱하여 '장르의 수 만큼 구문을 생성'한다.
+
+			func() string { // 상영 타입 또한 여러가지 타입이 동시에 존재할 수 있기에 익명함수를 통해 '타입갯수만큼 생성' 후 리턴
 				s := strings.Split(items.MtypeName, ",")
 				typ := ""
 				for _, s := range s {
-					typ += "INSERT IGNORE INTO MOV_TYPE " +
-						"VALUES((SELECT LAST_INSERT_ID()), '" + s + "');\n"
+					s = strings.TrimSpace(s)
+					typ += "INSERT INTO MOV_TYPE(MOV_SEQ,MTYPE_NAME) SELECT (SELECT LAST_INSERT_ID()),'" + s +
+						"' FROM DUAL WHERE NOT EXISTS(SELECT MOV_SEQ, MTYPE_NAME FROM MOV_TYPE " +
+						"WHERE MOV_SEQ = (SELECT LAST_INSERT_ID()) AND MTYPE_NAME='" + s + "');\n"
 				}
 				return typ
 			}() +
 
-			"INSERT IGNORE INTO MOV_IMG " +
-			"VALUES((SELECT LAST_INSERT_ID()), '" + items.MimgName[1:] + "');\n",
+			"INSERT INTO MOV_IMG(MOV_SEQ,MIMG_PATH)\n" +
+			"SELECT (SELECT LAST_INSERT_ID()), '" + items.MimgName[1:] +
+			"'\nFROM DUAL WHERE NOT EXISTS(SELECT MOV_SEQ, MIMG_PATH FROM MOV_IMG\n" +
+			"WHERE MOV_SEQ = (SELECT LAST_INSERT_ID()) AND MIMG_PATH='" + items.MimgName[1:] + "');\n",
 	)
 
 	if err != nil {
