@@ -36,10 +36,10 @@ type MovMst struct {
 }
 
 type MovDT struct {
-	MovDrt string // 감독
-	MovAct string // 출연진
-	MovLen string `json:"playTime"`     // 러닝타임
-	MovSmr string `json:"movieSynopCn"` // 설명
+	MdtDrt string // 감독
+	MdtAct string // 출연진
+	MdtLen string `json:"playTime"`     // 러닝타임
+	MdtSmr string `json:"movieSynopCn"` // 설명
 }
 
 type MovGenre struct {

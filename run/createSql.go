@@ -30,10 +30,10 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 
 			"INSERT INTO MOV_DT " +
 			"VALUES((SELECT LAST_INSERT_ID()), '" +
-			items.MovDrt + "', '" + items.MovAct + "', '" + items.MovLen + "', '" + items.MovSmr + "')\n" +
+			items.MdtDrt + "', '" + items.MdtAct + "', '" + items.MdtLen + "', '" + items.MdtSmr + "')\n" +
 			"ON DUPLICATE KEY UPDATE\nMOV_SEQ = LAST_INSERT_ID(MOV_SEQ), MDT_DRCT= '" +
-			items.MovDrt + "', MDT_ACT='" + items.MovAct + "', MDT_LEN='" + items.MovLen + "', " +
-			"MDT_SMR= '" + items.MovSmr + "';\n" +
+			items.MdtDrt + "', MDT_ACT='" + items.MdtAct + "', MDT_LEN='" + items.MdtLen + "', " +
+			"MDT_SMR= '" + items.MdtSmr + "';\n" +
 
 			func() string { // 장르는 따로 구분하여 넣기 때문에 슬라이싱하여 '장르의 수 만큼 구문을 생성'한다.
 				s := strings.Split(items.MgnrName, ",")

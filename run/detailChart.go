@@ -56,13 +56,13 @@ func (list *MovieList) DetailParse(body io.Reader) {
 			list.MtypeName = strings.TrimSpace(s.Text())
 		} else if strings.Contains(s.Text(), "감독") {
 			s.SetText(strings.Replace(s.Text(), "감독", "", -1))
-			list.MovDrt = strings.TrimSpace(s.Text())
+			list.MdtDrt = strings.TrimSpace(s.Text())
 		} else if strings.Contains(s.Text(), "장르") {
 			s.SetText(strings.Replace(s.Text(), "장르", "", -1))
 			list.MgnrName = strings.TrimSpace(strings.Split(s.Text(), "/")[0])
 		} else if strings.Contains(s.Text(), "출연진") {
 			s.SetText(strings.Replace(s.Text(), "출연진", "", -1))
-			list.MovAct = strings.TrimSpace(s.Text())
+			list.MdtAct = strings.TrimSpace(s.Text())
 		}
 	})
 	return
