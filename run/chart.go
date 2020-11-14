@@ -60,8 +60,8 @@ func (m *Megabox) GetList() {
 				items.MovTitle = strings.ReplaceAll(items.MovTitle, "/", "")
 			}
 
-			if items.MovLen == "MSC02" {
-				items.MovLen = "N"
+			if items.MdtLen == "MSC02" {
+				items.MdtLen = "N"
 			}
 
 			ext := items.MimgPath[len(items.MimgPath)-4:]
