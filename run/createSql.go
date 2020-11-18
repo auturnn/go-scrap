@@ -26,12 +26,12 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 	_, err := m.SqlFile.WriteString(
 		"\n\nINSERT INTO MOV_MST(MOV_TITLE, MOV_RANK, MOV_CNT, MOV_OPD, MOV_STAT, MOV_AGE)\n" +
 			"VALUES('" + items.MovTitle + "', " + rank + ", " + cnt + ", '" + items.MovOpd + "', '" + items.MovStat + "', '" + items.MovAge + "')\n" +
-			"ON DUPLICATE KEY UPDATE MOV_RANK = " + rank + ", MOV_CNT =" + cnt + ", MOV_STAT = '" + items.MovStat + "', MOV_SEQ = LAST_INSERT_ID(MOV_SEQ);\n" +
+			"ON DUPLICATE KEY UPDATE MOV_RANK = " + rank + ", MOV_CNT =" + cnt + ", MOV_STAT = '" + items.MovStat + "', MOV_ID = LAST_INSERT_ID(MOV_ID);\n" +
 
 			"INSERT INTO MOV_DT " +
 			"VALUES((SELECT LAST_INSERT_ID()), '" +
 			items.MdtDrt + "', '" + items.MdtAct + "', '" + items.MdtLen + "', '" + items.MdtSmr + "')\n" +
-			"ON DUPLICATE KEY UPDATE\nMOV_SEQ = LAST_INSERT_ID(MOV_SEQ), MDT_DRCT= '" +
+			"ON DUPLICATE KEY UPDATE\nMOV_ID = LAST_INSERT_ID(MOV_ID), MDT_DRCT= '" +
 			items.MdtDrt + "', MDT_ACT='" + items.MdtAct + "', MDT_LEN='" + items.MdtLen + "', " +
 			"MDT_SMR= '" + items.MdtSmr + "';\n" +
 
@@ -40,9 +40,9 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 				gnr := ""
 				for _, s := range s {
 					s = strings.TrimSpace(s)
-					gnr += "INSERT INTO MOV_GENRE(MOV_SEQ,MGNR_NAME) SELECT (SELECT LAST_INSERT_ID()),'" + s +
-						"'\nFROM DUAL WHERE NOT EXISTS(SELECT MOV_SEQ, MGNR_NAME FROM MOV_GENRE\n" +
-						"WHERE MOV_SEQ = (SELECT LAST_INSERT_ID()) AND MGNR_NAME='" + s + "');\n"
+					gnr += "INSERT INTO MOV_GENRE(MOV_ID,MGNR_NAME) SELECT (SELECT LAST_INSERT_ID()),'" + s +
+						"'\nFROM DUAL WHERE NOT EXISTS(SELECT MOV_ID, MGNR_NAME FROM MOV_GENRE\n" +
+						"WHERE MOV_ID = (SELECT LAST_INSERT_ID()) AND MGNR_NAME='" + s + "');\n"
 				}
 				return gnr
 			}() +
@@ -52,17 +52,17 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 				typ := ""
 				for _, s := range s {
 					s = strings.TrimSpace(s)
-					typ += "INSERT INTO MOV_TYPE(MOV_SEQ,MTYPE_NAME) SELECT (SELECT LAST_INSERT_ID()),'" + s +
-						"' FROM DUAL WHERE NOT EXISTS(SELECT MOV_SEQ, MTYPE_NAME FROM MOV_TYPE " +
-						"WHERE MOV_SEQ = (SELECT LAST_INSERT_ID()) AND MTYPE_NAME='" + s + "');\n"
+					typ += "INSERT INTO MOV_TYPE(MOV_ID,MTYPE_NAME) SELECT (SELECT LAST_INSERT_ID()),'" + s +
+						"' FROM DUAL WHERE NOT EXISTS(SELECT MOV_ID, MTYPE_NAME FROM MOV_TYPE " +
+						"WHERE MOV_ID = (SELECT LAST_INSERT_ID()) AND MTYPE_NAME='" + s + "');\n"
 				}
 				return typ
 			}() +
 
-			"INSERT INTO MOV_IMG(MOV_SEQ,MIMG_PATH)\n" +
+			"INSERT INTO MOV_IMG(MOV_ID,MIMG_PATH)\n" +
 			"SELECT (SELECT LAST_INSERT_ID()), '" + items.MimgName[1:] +
-			"'\nFROM DUAL WHERE NOT EXISTS(SELECT MOV_SEQ, MIMG_PATH FROM MOV_IMG\n" +
-			"WHERE MOV_SEQ = (SELECT LAST_INSERT_ID()) AND MIMG_PATH='" + items.MimgName[1:] + "');\n",
+			"'\nFROM DUAL WHERE NOT EXISTS(SELECT MOV_ID, MIMG_PATH FROM MOV_IMG\n" +
+			"WHERE MOV_ID = (SELECT LAST_INSERT_ID()) AND MIMG_PATH='" + items.MimgName[1:] + "');\n",
 	)
 
 	if err != nil {
