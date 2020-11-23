@@ -1,6 +1,5 @@
 ## Go-Scrap (Scraper)
 
----
 [![Go Report Card](https://goreportcard.com/badge/github.com/auturnn/go-scrap)](https://goreportcard.com/report/github.com/auturnn/go-scrap)
 ---
 
@@ -9,11 +8,6 @@
 
 해당 소스는 메가박스의 영화 리스트, 영화 정보페이지를 crawling하여\
 메인 포스터 이미지를 다운하고, 세부 정보들을 SQL로 작성 및 저장한다.
-
-### 업데이트 계획
-1. SQL문 작성 이후 문서화 -> DB에 SQL문 작성
-2. Spring Project에 이식
-3. 서버상에서 crontab을 이용한 자동화
 
 ---
 
@@ -31,3 +25,9 @@
     - /poster
         - /ing : 상영작 포스터 저장
         - /pre : 상영예정작 포스터 저장
+---
+### 업데이트 계획
+1. SQL문 작성 이후 문서화 -> DB에 SQL문 작성
+2. Spring Project에 이식
+3. 서버상에서 crontab을 이용한 자동화
+
