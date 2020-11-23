@@ -11,6 +11,7 @@ import (
 	"sync"
 )
 
+//GetList is parsing of Megabox Movie List json. And after running go-rootine for other Function.
 func (m *Megabox) GetList() {
 	method := "POST"
 	client := &http.Client{}
@@ -41,8 +42,8 @@ func (m *Megabox) GetList() {
 		log.Fatal(err)
 	}
 
-	m.SqlFile, _ = os.OpenFile(
-		m.SqlFileName,
+	m.SQLFile, _ = os.OpenFile(
+		m.SQLFileName,
 		os.O_CREATE|os.O_RDWR|os.O_TRUNC,
 		os.FileMode(0644),
 	)
@@ -64,12 +65,16 @@ func (m *Megabox) GetList() {
 				items.MdtLen = "N"
 			}
 
-			ext := items.MimgPath[len(items.MimgPath)-4:]
-			items.MimgName = m.ImgPath + items.MovTitle + ext
-
-			m.PosterDown(items)
-			m.DetailRequest(&items)
-			m.CreateSQL(&items)
+			//정상적인 이미지 경로의 경우 모두 길이가 58로 고정.
+			if len(items.MimgPath) == 58 {
+				ext := items.MimgPath[len(items.MimgPath)-4:]
+				items.MimgName = m.ImgPath + items.MovTitle + ext
+				m.PosterDown(items)
+				m.DetailRequest(&items)
+				m.CreateSQL(&items)
+			} else {
+				log.Println("Pass :", items.MovTitle)
+			}
 		}(items)
 	}
 

@@ -27,7 +27,7 @@ func (m *Megabox) DetailRequest(list *MovieList) {
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Cookie", "WMONID=zcT2Xq9q57s; SESSION=MWQyNjkwNGItM2UzNy00ODYyLTk5NjMtYTAxMDg0ODc4OTA4; JSESSIONID=jB8RGqjtL1gk798CwmTE1cu2QFDZqPePnXeN6lOpkUtl4qEOVbG6X0wNY9YQceL9.b25fbWVnYWJveF9kb21haW4vbWVnYS1vbi1zZXJ2ZXIy; SameSite=None")
+	// req.Header.Add("Cookie", "WMONID=zcT2Xq9q57s; SESSION=MWQyNjkwNGItM2UzNy00ODYyLTk5NjMtYTAxMDg0ODc4OTA4; JSESSIONID=jB8RGqjtL1gk798CwmTE1cu2QFDZqPePnXeN6lOpkUtl4qEOVbG6X0wNY9YQceL9.b25fbWVnYWJveF9kb21haW4vbWVnYS1vbi1zZXJ2ZXIy; SameSite=None")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -42,6 +42,7 @@ func (m *Megabox) DetailRequest(list *MovieList) {
 	return
 }
 
+//DetailParse is parse for Megabox movie info page
 func (list *MovieList) DetailParse(body io.Reader) {
 	doc, err := goquery.NewDocumentFromReader(body)
 	if err != nil {
@@ -49,7 +50,7 @@ func (list *MovieList) DetailParse(body io.Reader) {
 	}
 
 	info := doc.Find("div.inner-wrap").Find("div.movie-info.infoContent")
-	info.Find("p").Each(func(i int, s *goquery.Selection) {
+	info.Find("p").Each(func(_ int, s *goquery.Selection) {
 		s.SetText(strings.Replace(s.Text(), ":", "", -1))
 		if strings.Contains(s.Text(), "상영타입") {
 			s.SetText(strings.Replace(s.Text(), "상영타입", "", -1))

@@ -6,6 +6,7 @@ import (
 	"github.com/cavaliercoder/grab"
 )
 
+//Run is json data's setting
 func Run() {
 	list := map[string]map[string]string{
 		"ing": map[string]string{
@@ -43,7 +44,7 @@ func Run() {
 				Host:        "https://www.megabox.co.kr/on/oh/oha/Movie/selectMovieList.do",
 				ImgPath:     items["ImgPath"],
 				PayLoad:     items["PayLoad"],
-				SqlFileName: items["SqlFileName"],
+				SQLFileName: items["SqlFileName"],
 				Client:      grab.NewClient(),
 			}
 			m.GetList()

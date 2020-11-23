@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+//CreateSQL is saved .sql file for mysql
 func (m *Megabox) CreateSQL(items *MovieList) {
 	if items.MovAge == "전체관람가" {
 		items.MovAge = "all"
@@ -23,7 +24,7 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 
 	rank := strconv.Itoa(items.MovRank)
 	cnt := strconv.Itoa(items.MovCnt)
-	_, err := m.SqlFile.WriteString(
+	_, err := m.SQLFile.WriteString(
 		"\n\nINSERT INTO MOV_MST(MOV_TITLE, MOV_RANK, MOV_CNT, MOV_OPD, MOV_STAT, MOV_AGE)\n" +
 			"VALUES('" + items.MovTitle + "', " + rank + ", " + cnt + ", '" + items.MovOpd + "', '" + items.MovStat + "', '" + items.MovAge + "')\n" +
 			"ON DUPLICATE KEY UPDATE MOV_RANK = " + rank + ", MOV_CNT =" + cnt + ", MOV_STAT = '" + items.MovStat + "', MOV_ID = LAST_INSERT_ID(MOV_ID);\n" +
