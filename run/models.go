@@ -31,33 +31,37 @@ type MovieList struct {
 
 //MovMst is DB struct(table column)
 type MovMst struct {
-	MovTitle string `json:"movieNm"`           // 영화이름
-	MovCnt   int    `json:"boxoKofTotAdncCnt"` // 누적관객
-	MovOpd   string `json:"rfilmDe"`           // 개봉일
-	MovStat  string `json:"onairYn"`           // Status
-	MovAge   string `json:"admisClassNm"`      // 등급
+	Title    string `json:"movieNm"`           // 영화이름
+	Cnt      int    `json:"boxoKofTotAdncCnt"` // 누적관객
+	OpenDate string `json:"rfilmDe"`           // 개봉일
+	Stat     string `json:"onairYn"`           // Status
+	Age      string `json:"admisClassNm"`      // 등급
 }
 
 //MovDT is DB struct(table column)
 type MovDT struct {
-	MdtDrt string // 감독
-	MdtAct string // 출연진
-	MdtLen string `json:"playTime"`     // 러닝타임
-	MdtSmr string `json:"movieSynopCn"` // 설명
+	Direct  string // 감독
+	Actor   string // 출연진
+	Runtime string `json:"playTime"`     // 러닝타임
+	Summary string `json:"movieSynopCn"` // 설명
 }
 
 //MovGenre is DB struct(table column)
 type MovGenre struct {
-	MgnrName string //장르이름
+	GenreName string //장르이름
 }
 
 //MovType is DB struct(table column)
 type MovType struct {
-	MtypeName string // 2D, 3D등
+	TypeName string // 2D, 3D등
 }
 
 //MovImg is DB struct(table column)
 type MovImg struct {
-	MimgPath string `json:"imgPathNm"` //포스터 저장 위치
-	MimgName string
+	ImgPath string `json:"imgPathNm"` //포스터 저장 위치
+	ImgName string
+}
+
+type TypeMst struct {
+	TypeName string
 }

@@ -10,8 +10,8 @@ import (
 //PosterDown is download for movie main poster
 func (m *Megabox) PosterDown(list MovieList) {
 	//해당 이미지가 이미 있는 지 확인. false일 경우 retrun
-	if _, err := os.Stat(list.MimgName); !os.IsNotExist(err) {
-		log.Println("Img already :" + list.MimgName)
+	if _, err := os.Stat(list.ImgName); !os.IsNotExist(err) {
+		log.Println("Img already :" + list.ImgName)
 		return
 	}
 
@@ -21,7 +21,7 @@ func (m *Megabox) PosterDown(list MovieList) {
 	// 	log.Println("Img DownLoad Error :", list.MimgName)
 	// }
 
-	request, _ := grab.NewRequest(m.ImgPath, m.ImgSvrURL+list.MimgPath)
+	request, _ := grab.NewRequest(m.ImgPath, m.ImgSvrURL+list.ImgPath)
 	response := m.Client.Do(request)
 	filename := response.Filename
 
@@ -33,9 +33,9 @@ func (m *Megabox) PosterDown(list MovieList) {
 				log.Println("Poster download Err:" + filename)
 			}
 
-			err = os.Rename(filename, list.MimgName)
+			err = os.Rename(filename, list.ImgName)
 			if err != nil {
-				log.Println("Poster Rename Err:" + list.MimgName)
+				log.Println("Poster Rename Err:" + list.ImgName)
 			}
 			// log.Println("IMG Done!"+m.ImgPath+list.MovTitle+".jpg", response.HTTPResponse.StatusCode)
 			return

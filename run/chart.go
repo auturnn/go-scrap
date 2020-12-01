@@ -47,6 +47,16 @@ func (m *Megabox) GetList() {
 		os.O_CREATE|os.O_RDWR|os.O_TRUNC,
 		os.FileMode(0644),
 	)
+	if m.SQLFileName == "./sql/movie-ing.sql" {
+		_, err = m.SQLFile.WriteString(
+			"DELETE FROM mov_type;\n" +
+				"DELETE FROM mov_genre;\n" +
+				"DELETE FROM mov_img;\n" +
+				"DELETE FROM mov_dt;\n" +
+				"DELETE FROM mov_mst;\n" +
+				"ALTER TABLE mov_mst AUTO_INCREMENT = 1;\n",
+		)
+	}
 
 	var wait sync.WaitGroup
 	wait.Add(len(m.MovieList))
@@ -55,25 +65,25 @@ func (m *Megabox) GetList() {
 		go func(items MovieList) {
 			defer wait.Done()
 
-			if strings.ContainsAny(items.MovTitle, ":") {
-				items.MovTitle = strings.ReplaceAll(items.MovTitle, ":", "")
-			} else if strings.ContainsAny(items.MovTitle, "/") {
-				items.MovTitle = strings.ReplaceAll(items.MovTitle, "/", "")
+			if strings.ContainsAny(items.Title, ":") {
+				items.Title = strings.ReplaceAll(items.Title, ":", "")
+			} else if strings.ContainsAny(items.Title, "/") {
+				items.Title = strings.ReplaceAll(items.Title, "/", "")
 			}
 
-			if items.MdtLen == "MSC02" {
-				items.MdtLen = "N"
+			if items.Runtime == "MSC02" {
+				items.Runtime = "N"
 			}
 
 			//정상적인 이미지 경로의 경우 모두 길이가 58로 고정.
-			if len(items.MimgPath) == 58 {
-				ext := items.MimgPath[len(items.MimgPath)-4:]
-				items.MimgName = m.ImgPath + items.MovTitle + ext
+			if len(items.ImgPath) == 58 {
+				ext := items.ImgPath[len(items.ImgPath)-4:]
+				items.ImgName = m.ImgPath + items.Title + ext
 				m.PosterDown(items)
 				m.DetailRequest(&items)
 				m.CreateSQL(&items)
 			} else {
-				log.Println("Pass :", items.MovTitle)
+				log.Println("Pass :", items.Title)
 			}
 		}(items)
 	}
