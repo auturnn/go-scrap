@@ -10,7 +10,7 @@ import (
 func Run() {
 	list := map[string]map[string]string{
 		"ing": map[string]string{
-			"ImgPath": "./img/poster/ing/",
+			"ImgPath": "./resources/img/poster/ing/",
 			"PayLoad": `{
 				"currentPage": "1",
 				"ibxMovieNmSearch": "",
@@ -22,7 +22,7 @@ func Run() {
 			"SqlFileName": "./sql/movie-ing.sql",
 		},
 		"pre": map[string]string{
-			"ImgPath": "./img/poster/pre/",
+			"ImgPath": "./resources/img/poster/pre/",
 			"PayLoad": `{
 				"currentPage": "1",
 		 	"ibxMovieNmSearch": "",

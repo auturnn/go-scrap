@@ -49,29 +49,7 @@ func (m *Megabox) GetList() {
 	)
 	if m.SQLFileName == "./sql/movie-ing.sql" {
 		_, err = m.SQLFile.WriteString(
-			"DELETE FROM user_test;\n" +
-				"DELETE FROM reserv_mst;\n" +
-				"DELETE FROM rest_cnt;\n" +
-				"DELETE FROM play_mst;\n" +
-				"DELETE FROM seat_mst;\n" +
-				"DELETE FROM room_mst;\n" +
-				"DELETE FROM thea_mst;\n" +
-				"DELETE FROM city_mst;\n" +
-				"DELETE FROM mov_type;\n" +
-				"DELETE FROM type_mst;\n" +
-				"DELETE FROM mov_genre;\n" +
-				"DELETE FROM mov_img;\n" +
-				"DELETE FROM mov_dt;\n" +
-				"DELETE FROM mov_mst;\n" +
-				"ALTER TABLE type_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE play_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE city_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE reserv_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE rest_cnt AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE seat_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE room_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE thea_mst AUTO_INCREMENT = 1;\n" +
-				"ALTER TABLE mov_mst AUTO_INCREMENT = 1;\n",
+			"UPDATE mov_mst SET stat = 'N', rank=999;\n",
 		)
 	}
 
