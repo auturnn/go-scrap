@@ -53,6 +53,12 @@ func (m *Megabox) GetList() {
 		)
 	}
 
+	m.ReqDetailInfo()
+
+	return
+}
+
+func (m *Megabox) ReqDetailInfo() {
 	var wait sync.WaitGroup
 	wait.Add(len(m.MovieList))
 
@@ -84,6 +90,5 @@ func (m *Megabox) GetList() {
 	}
 
 	wait.Wait()
-
 	return
 }

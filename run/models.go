@@ -31,7 +31,8 @@ type MovieList struct {
 
 //MovMst is DB struct(table column)
 type MovMst struct {
-	Title    string `json:"movieNm"`           // 영화이름
+	Title    string `json:"movieNm"` // 영화이름
+	TitleEng string
 	Cnt      int    `json:"boxoKofTotAdncCnt"` // 누적관객
 	OpenDate string `json:"rfilmDe"`           // 개봉일
 	Stat     string `json:"onairYn"`           // Status

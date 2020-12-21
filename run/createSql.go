@@ -25,12 +25,12 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 	rank := strconv.Itoa(items.MovRank)
 	cnt := strconv.Itoa(items.Cnt)
 	_, err := m.SQLFile.WriteString(
-		"\n\nINSERT INTO mov_mst(title, rank, cnt, open_date, stat, age)\n" +
-			"VALUES('" + items.Title + "', " + rank + ", " + cnt + ", '" + items.OpenDate + "', '" + items.Stat + "', '" + items.Age + "')\n" +
-			"ON DUPLICATE KEY UPDATE rank = " + rank + ", cnt =" + cnt + ", stat = '" + items.Stat + "', mov_idx = LAST_INSERT_ID(mov_idx);\n" +
-			"SET @movidx = LAST_INSERT_ID();\n" +
+		"\n\nINSERT INTO mov_mst(kr_title, en_title, rank, cnt, op_date, stat, age)\n" +
+			"VALUES('" + items.Title + "', '" + items.TitleEng + "', " + rank + ", " + cnt + ", '" + items.OpenDate + "', '" + items.Stat + "', '" + items.Age + "')\n" +
+			"ON DUPLICATE KEY UPDATE rank = " + rank + ", cnt =" + cnt + ", stat = '" + items.Stat + "', id = LAST_INSERT_ID(id);\n" +
+			"SET @movid = LAST_INSERT_ID();\n" +
 			"INSERT INTO mov_dt " +
-			"VALUES (@movidx, '" +
+			"VALUES (@movid, '" +
 			items.Direct + "', '" + items.Actor + "', '" + items.Runtime + "', '" + items.Summary + "')\n" +
 			"ON DUPLICATE KEY UPDATE\n director= '" +
 			items.Direct + "', actor ='" + items.Actor + "', runtime ='" + items.Runtime + "', " +
@@ -41,17 +41,17 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 				gnr := ""
 				for _, s := range s {
 					s = strings.TrimSpace(s)
-					gnr += "INSERT INTO mov_genre(mov_idx, genre_name) SELECT @movidx, '" + s +
-						"'\nFROM DUAL WHERE NOT EXISTS(SELECT mov_idx, genre_name FROM mov_genre\n" +
-						"WHERE mov_idx = @movidx AND genre_name='" + s + "');\n"
+					gnr += "INSERT INTO mov_genre(mov_id, name) SELECT @movid, '" + s +
+						"'\nFROM DUAL WHERE NOT EXISTS(SELECT mov_id, name FROM mov_genre\n" +
+						"WHERE mov_id = @movid AND name='" + s + "');\n"
 				}
 				return gnr
 			}() +
 
-			"INSERT INTO mov_img(mov_idx,img_path)\n" +
-			"SELECT @movidx, '" + items.ImgName[1:] +
-			"'\nFROM DUAL WHERE NOT EXISTS(SELECT mov_idx, img_path FROM mov_img\n" +
-			"WHERE mov_idx = @movidx AND img_path='" + items.ImgName[1:] + "');\n" +
+			"INSERT INTO mov_img(mov_id,img_path)\n" +
+			"SELECT @movid, '" + items.ImgName[1:] +
+			"'\nFROM DUAL WHERE NOT EXISTS(SELECT mov_id, img_path FROM mov_img\n" +
+			"WHERE mov_id = @movid AND img_path='" + items.ImgName[1:] + "');\n" +
 
 			func() string { // 상영 타입 또한 여러가지 타입이 동시에 존재할 수 있기에 익명함수를 통해 '타입갯수만큼 생성' 후 리턴
 				s := strings.Split(items.TypeName, ",")
@@ -59,13 +59,13 @@ func (m *Megabox) CreateSQL(items *MovieList) {
 
 				for _, s := range s {
 					s = strings.TrimSpace(s)
-					typ += "INSERT INTO type_mst(type_name) " +
+					typ += "INSERT INTO type_mst(name) " +
 						"VALUES('" + s + "')\n" +
-						"ON DUPLICATE KEY UPDATE\ntype_idx = (@typeidx := LAST_INSERT_ID(type_idx));\n" +
-						"INSERT INTO mov_type(mov_idx,type_idx)\n" +
-						"SELECT @movidx, @typeidx\n" +
-						"FROM DUAL WHERE NOT EXISTS(SELECT mov_idx, type_idx FROM mov_type\n" +
-						"WHERE mov_idx = @movidx AND type_idx=@typeidx);\n"
+						"ON DUPLICATE KEY UPDATE\nid = (@typeid := LAST_INSERT_ID(id));\n" +
+						"INSERT INTO mov_type(mov_id,type_id)\n" +
+						"SELECT @movid, @typeid\n" +
+						"FROM DUAL WHERE NOT EXISTS(SELECT mov_id, type_id FROM mov_type\n" +
+						"WHERE mov_id = @movid AND type_id=@typeid);\n"
 				}
 				return typ
 			}(),

@@ -12,13 +12,14 @@ type Model struct {
 }
 
 type MovMst struct {
-	MovID    int
-	MovTitle string
-	MovRank  string
-	MovCnt   int
-	MovOpd   time.Time
-	MovStat  string
-	MovAge   string
+	MovID       int
+	MovTitle    string
+	MovEngTitle string
+	MovRank     string
+	MovCnt      int
+	MovOpd      time.Time
+	MovStat     string
+	MovAge      string
 }
 
 type MovDt struct {
